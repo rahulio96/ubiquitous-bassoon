@@ -83,7 +83,7 @@ function App() {
         <button className='cursor-pointer bg-black px-5 py-3 text-white' onClick={signOut}>Sign Out</button>
       }
       
-      <div className=''>{`Hello, ${user?.first_name}!`}</div>
+      <div className=''>{`Hello, ${user ? `${user.first_name}!` : 'please log in'}`}</div>
       <div className=''>{user?.email}</div>
 
       {text && <div className='mt-4 p-4 bg-gray-100 rounded'>{text}</div>}
