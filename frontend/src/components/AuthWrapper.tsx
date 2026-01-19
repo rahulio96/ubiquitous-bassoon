@@ -12,7 +12,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
 
     const fetchUserData = async () => {
         try {
-            const data = await apiFetch(`${API_URL}/api/protected/user`);
+            const data = await apiFetch(`${API_URL}/api/v1/protected/user`);
             if (!data.ok) {
                 throw new Error('Failed to fetch user data');
             }
