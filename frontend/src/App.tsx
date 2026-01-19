@@ -38,7 +38,7 @@ function App() {
       <div className=''>{`Hello, ${user ? `${user.first_name}!` : 'please log in'}`}</div>
       <div className=''>{user?.email}</div>
 
-      <Link to="/courses" className='text-blue-500 underline'>Go to Courses</Link>
+      <Link to="/editor" className='text-blue-500 underline'>Go to Editor</Link>
     </div>
   );
 }

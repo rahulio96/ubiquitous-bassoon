@@ -12,14 +12,14 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
 
     const fetchUserData = async () => {
         try {
-        const data = await apiFetch(`${API_URL}/api/protected/user`);
-        if (!data.ok) {
-            throw new Error('Failed to fetch user data');
-        }
-        const userData = await data.json();
-        setUser(userData);
+            const data = await apiFetch(`${API_URL}/api/protected/user`);
+            if (!data.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+            const userData = await data.json();
+            setUser(userData);
         } catch (error) {
-        console.error('Error fetching user data:', error);
+            console.error('Error fetching user data:', error);
         }
     };
 
