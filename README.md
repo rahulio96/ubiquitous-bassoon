@@ -6,8 +6,8 @@ npm run dev
 ```
 
 ## Run Backend
-
-Initialize Python virtual environment first, then:
+1. Install Docker
+2. Initialize Python virtual environment first, then:
 ```bash
 cd ./backend
 pip install -r ./requirements.txt
