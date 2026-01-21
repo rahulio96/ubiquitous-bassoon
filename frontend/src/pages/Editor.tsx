@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import AuthChecker from "./AuthChecker";
+import AuthChecker from "../components/AuthChecker";
 import Editor from '@monaco-editor/react';
 import { useState } from "react";
 import { API_URL } from "../config/env";
@@ -52,31 +51,44 @@ function EditorPage() {
 
     return (
         <AuthChecker>
-            <div className='flex flex-col gap-2 justify-center items-center min-h-screen'>
-                Code Editor (Python)
-                <Editor
-                    height="80vh"
-                    width="50vw"
-                    theme="vs-dark"
-                    defaultLanguage="python"
-                    value={codeValue}
-                    onChange={handleEditorChange}
-                />
+            <div className='flex gap-2 justify-center items-center min-h-screen px-10 pt-5'>
+                <div className="flex justify-between w-full gap-5">
 
-                <button 
-                    className='cursor-pointer bg-black px-5 py-3 text-white'
-                    onClick={handleRunCode}
-                    disabled={isLoading}>
-                        {isLoading ? "Running..." : "Run Code"}
-                </button>
+                    <div className="flex flex-col min-h-[75vh] w-full">
+                        <div className="py-3 pl-5 bg-(--textbg)">Python Editor:</div>
+                        <Editor
+                            theme="vs-dark"
+                            defaultLanguage="python"
+                            value={codeValue}
+                            onChange={handleEditorChange}
+                        />
+                    </div>
 
-                <div>Output:
-                    <span className={(codeResponse && codeResponse.is_error) 
-                        ? "text-red-500" : "text-green-500"}>
-                            {`${codeResponse ? codeResponse.output : ""}`}
-                    </span>
+
+                    <div className="flex flex-col w-full pl-10 gap-10">
+                        <button 
+                            className='cursor-pointer bg-black px-5 py-3'
+                            onClick={handleRunCode}
+                            disabled={isLoading}>
+                                {isLoading ? "Running..." : "Run Code"}
+                        </button>
+
+                        <div className="justify-start">
+                            <div className={`p-4 h-[40vh] overflow-y-scroll whitespace-pre-wrap bg-(--secondary) 
+                                ${(codeResponse && codeResponse.is_error) && "text-red-500"}`}>
+                                Output: 
+                                {codeResponse ? codeResponse.output : ""} 
+                            </div>
+                        </div>
+                        
+                        <textarea
+                            className="bg-(--textbg) h-full p-5 resize-none"
+                            placeholder="Notes..."
+                        />
+
+                    </div>
+
                 </div>
-                <Link to="/" className='text-blue-500 underline'>Go back to Home</Link>
             </div>
         </AuthChecker>
     );

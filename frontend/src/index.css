@@ -6,9 +6,16 @@
     line-height: 1.5;
     font-weight: 400;
 
+    --primary: #141414;
+    --secondary: rgba(0, 0, 0, 0.55);
+    --textbg: #1e1e1e;
+    --textcolor: rgba(255, 255, 255, 0.87);
+
     color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
+    
+    /* variables */
+    background-color: var(--primary);
+    color: var(--textcolor);
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
