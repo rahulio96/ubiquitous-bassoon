@@ -8,10 +8,10 @@ function Navbar() {
     // Log user in using Google SSO
     const signIn = async () => {
         const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+            provider: 'google',
         });
         if (error) {
-        console.error('Error signing in:', error);
+            console.error('Error signing in:', error);
         }
     };
 
@@ -19,15 +19,13 @@ function Navbar() {
     const signOut = async () => {
         const { error } = await supabase.auth.signOut();
         if (error) {
-        console.error('Error signing out:', error);
-        } else {
-        console.log('Signed out successfully');
+            console.error('Error signing out:', error);
         }
     };
     
     return (
         <nav className="flex items-center p-3.5 px-10 z-10 absolute w-full justify-between text-center bg-(--secondary)">
-            <Link className='text-blue-300' to="/">Home</Link>
+            <Link className='text-green-400' to="/">Home</Link>
             <div className="flex gap-10 justify-end">
                 {!session && 
                     <button

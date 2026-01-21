@@ -36,7 +36,6 @@ function EditorPage() {
             }
 
             const data = await response.json();
-            console.log('Code execution result:', data);
             setCodeResponse(data);
         }
 
@@ -64,7 +63,6 @@ function EditorPage() {
                         />
                     </div>
 
-
                     <div className="flex flex-col w-full pl-10 gap-10">
                         <button 
                             className='cursor-pointer bg-black px-5 py-3'
@@ -73,11 +71,12 @@ function EditorPage() {
                                 {isLoading ? "Running..." : "Run Code"}
                         </button>
 
-                        <div className="justify-start">
-                            <div className={`p-4 h-[40vh] overflow-y-scroll whitespace-pre-wrap bg-(--secondary) 
-                                ${(codeResponse && codeResponse.is_error) && "text-red-500"}`}>
-                                Output: 
-                                {codeResponse ? codeResponse.output : ""} 
+                        <div className="justify-start bg-(--secondary) p-4">
+                            Output:
+                            <div className="flex-col h-[40vh] overflow-y-scroll whitespace-pre-wrap wrap-break-word p-2">
+                                <span className={`block ${(codeResponse && codeResponse.is_error) && "text-red-500"}`}>
+                                    {codeResponse ? `${codeResponse.output}` : ""}
+                                </span>
                             </div>
                         </div>
                         
