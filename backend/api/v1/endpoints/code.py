@@ -76,6 +76,11 @@ async def execute_code(request: Request, user: User=Depends(verify_token)):
 
                 if container.status == "exited":
                     container_result = container.logs(stdout=True, stderr=True)
+                    exit_code = container.attrs['State']['ExitCode']
+
+                    if exit_code != 0:
+                        is_error = True
+
                     output = container_result.decode("utf-8")
                     break
                 time.sleep(0.1)
@@ -84,10 +89,6 @@ async def execute_code(request: Request, user: User=Depends(verify_token)):
                 container.remove(force=True)
                 output="Time limit exceeded."
                 is_error = True
-
-        except docker.errors.ContainerError as e:
-            output = e.stderr.decode("utf-8")
-            is_error = True
 
         except Exception as e:
             print(e)
