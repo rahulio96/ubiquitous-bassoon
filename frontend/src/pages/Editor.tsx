@@ -1,18 +1,45 @@
 import AuthChecker from "../components/AuthChecker";
 import Editor from '@monaco-editor/react';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { API_URL } from "../config/env";
 import { apiFetch } from "../api";
 import type { ExecuteCodeResponse } from "../types/code";
 
 function EditorPage() {
-    const [codeValue, setCodeValue] = useState("# type here");
+
+    const [codeValue, setCodeValue] = useState<string>("# type here");
     const [codeResponse, setCodeResponse] = useState<ExecuteCodeResponse | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const handleEditorChange = (value: string | undefined) => {
         setCodeValue(value || "");
     };
+
+    const fetchRandomQuestion = async (difficulty: string) => {
+        try {
+            const response = await fetch(`${API_URL}/api/v1/question/random/${difficulty}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch question');
+            }
+
+            const data = await response.json();
+            setCodeValue(`${data.starter_code}`);
+        }
+        catch (error) {
+            console.error('Error fetching random question:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchRandomQuestion('easy');
+    }, []);
 
     const handleRunCode = async () => {
         if (!codeValue.trim()) {
@@ -53,7 +80,7 @@ function EditorPage() {
             <div className='flex gap-2 justify-center items-center min-h-screen px-10 pt-5'>
                 <div className="flex justify-between w-full gap-5">
 
-                    <div className="flex flex-col min-h-[75vh] min-w-[50vw] w-full">
+                    <div className="flex flex-col min-h-[75vh] min-w-[60vw] w-full">
                         <div className="py-3 px-5 bg-(--textbg) flex justify-between items-center font-bold">
                             Python Editor:
 

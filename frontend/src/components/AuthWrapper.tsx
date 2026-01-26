@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import supabase from "../supabaseClient";
 import type { User } from "../types/user";
 import { apiFetch } from "../api";
 import { API_URL } from "../config/env";
 import type { Session } from "@supabase/supabase-js/dist/index.cjs";
 import { AuthContext } from "../context/AuthContext";
+import { supabase } from "../supabaseClient";
 
 function AuthWrapper({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);

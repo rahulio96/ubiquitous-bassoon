@@ -1,4 +1,4 @@
-import supabase from './supabaseClient';
+import { supabase } from './supabaseClient';
 
 // Use this function to get the session, and send auth info to backend
 // to verify the user before the API call
