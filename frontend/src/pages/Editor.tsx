@@ -7,6 +7,7 @@ import type { ExecuteCodeResponse } from "../types/code";
 
 function EditorPage() {
 
+    const [problemId, setProblemId] = useState<string>("");
     const [codeValue, setCodeValue] = useState<string>("# type here");
     const [codeResponse, setCodeResponse] = useState<ExecuteCodeResponse | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,6 +32,7 @@ function EditorPage() {
 
             const data = await response.json();
             setCodeValue(`${data.starter_code}`);
+            setProblemId(`${data.id}`);
         }
         catch (error) {
             console.error('Error fetching random question:', error);
@@ -41,11 +43,36 @@ function EditorPage() {
         fetchRandomQuestion('easy');
     }, []);
 
+    const fetchTestCases = async (questionId: string) => {
+        try {
+            const response = await fetch(`${API_URL}/api/v1/question/testcases/${questionId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch test cases');
+            }
+
+            const data = await response.json();
+            return data.code;
+        }
+        catch (error) {
+            console.error('Error fetching test cases:', error);
+        }
+    };
+
     const handleRunCode = async () => {
         if (!codeValue.trim()) {
             setCodeResponse({ output: "No code to execute", is_error: true });
             return;
         }
+
+        const testCasesCode = await fetchTestCases(problemId);
+        console.log(codeValue + "\n" + testCasesCode);
 
         try {
             setIsLoading(true);

@@ -9,6 +9,6 @@ class QuestionTestCase(BaseModel):
     input: str
     expected_output: str
 
-class TestQuestionSolution(BaseModel):
+class TestQuestionSolutions(BaseModel):
     entry_point: str
     test_cases: list[QuestionTestCase]

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Request, HTTPException
+from backend.api.v1.endpoints.question import get_test_case_code
 from backend.api.verify_token import verify_token
 import tempfile
 import os
@@ -20,7 +21,8 @@ async def execute_code(request: Request, user: User=Depends(verify_token)):
 
     data = await request.json()
     code = data.get("code")
-
+    code = "from typing import List, Optional, Union\n\n" + code
+    
     # default to python
     language = data.get("language", "python")
 
@@ -103,3 +105,20 @@ async def execute_code(request: Request, user: User=Depends(verify_token)):
         return CodeExecutionResponse(output=output, is_error=is_error)
 
 
+# Run the code against test cases for a question
+@router.post("/run-testcases/{question_id}")
+async def run_testcases(question_id: str, request: Request, user: User=Depends(verify_token)):
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    data = await request.json()
+    code = data.get("code")
+
+    test_case_code_response = await get_test_case_code(question_id)
+    test_case_code = test_case_code_response["code"]
+
+    full_code = code + "\n\n" + test_case_code
+
+    response = await execute_code({"code": full_code}, user=user)
+
+    return response
