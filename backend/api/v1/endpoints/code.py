@@ -22,19 +22,28 @@ async def execute_code(request: Request, user: User=Depends(verify_token)):
     data = await request.json()
     code = data.get("code")
     code = "from typing import List, Optional, Union\n\n" + code
-    
+
     # default to python
     language = data.get("language", "python")
 
     if not code:
         raise HTTPException(status_code=400, detail="Cannot execute empty code.")
 
-    if len(code.encode("utf-8")) > MAX_CODE_SIZE:
-        raise HTTPException(status_code=400, detail="Code size exceeds the maximum limit.")
+    # TODO: Remove for now, ADD LATER WHEN WE EXCLUDE TEST CASES CODE!!!!!
+    # if len(code.encode("utf-8")) > MAX_CODE_SIZE:
+    #     raise HTTPException(status_code=400, detail="Code size exceeds the maximum limit.")
     
     # NOTE: Update this if other language support is added
     if language != "python":
         raise HTTPException(status_code=400, detail="Unsupported language.")
+    
+    full_code = code
+    try:
+        with open(f'{os.getcwd()}/core/code_utils.py', 'r') as f:
+            code_utils_content = f.read()
+        full_code = code_utils_content + "\n\n" + code
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error preparing code for execution: {str(e)}")
     
     # create a temporary folder/file to hold the code
     with tempfile.TemporaryDirectory() as tempdir:
@@ -42,7 +51,7 @@ async def execute_code(request: Request, user: User=Depends(verify_token)):
 
         # write code to temp file
         with open(code_file_path, "w") as code_file:
-            code_file.write(code)
+            code_file.write(full_code)
 
         client = docker.from_env()
         container_name = "python_container"

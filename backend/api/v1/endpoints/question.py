@@ -110,9 +110,7 @@ async def get_test_case_code(question_id: str):
             test_cases = ast.literal_eval(question_data["input_output"])
             
             # Handle ListNode or TreeNode cases
-            code = "import backend.core.code_utils as code_utils\n\n"
-
-            code += "count = 0\n"
+            code = "count = 0\n"
             code += "solution = " + entry_point + "\n"
             num_test_cases = len(test_cases)
 
@@ -128,16 +126,20 @@ async def get_test_case_code(question_id: str):
                     variable_name = input_split[0].strip()
                     variable_value = input_split[1].strip()
 
-                    if input_type == "ListNode":
-                        inputs[i] = f"{variable_name} = code_utils.list_to_linked_list({variable_value.strip()})"
-                    elif input_type == "TreeNode":
-                        inputs[i] = f"{variable_name} = code_utils.list_to_tree({variable_value.strip()})"
+                    if "ListNode" in input_type:
+                        inputs[i] = f"{variable_name} = list_to_linked_list({variable_value.strip()})"
+                    elif "TreeNode" in input_type:
+                        inputs[i] = f"{variable_name} = list_to_tree({variable_value.strip()})"
+                    else:
+                        inputs[i] = f"{variable_name} = {variable_value.strip()}"
 
-                if test_case["output_type"].strip() == "ListNode":
-                    code += "if code_utils.linked_list_to_list(solution(" + test_case["input"] + ")) == " + repr(test_case["output"]) + ":\n"
+                test_case["input"] = ', '.join(inputs)
 
-                elif test_case["output_type"].strip() == "TreeNode":
-                    code += "if code_utils.tree_to_list(solution(" + test_case["input"] + ")) == " + repr(test_case["output"]) + ":\n"
+                if "ListNode" in question_data["output_type"].strip():
+                    code += "if linked_list_to_list(solution(" + test_case["input"] + ")) == " + test_case["output"].strip() + ":\n"
+
+                elif "TreeNode" in question_data["output_type"].strip():
+                    code += "if tree_to_list(solution(" + test_case["input"] + ")) == " + test_case["output"].strip() + ":\n"
 
                 else:
                     code += "if solution(" + test_case["input"] + ") == " + repr(test_case["output"]) + ":\n"
@@ -153,3 +155,7 @@ async def get_test_case_code(question_id: str):
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=f"Error fetching test cases: {str(e)}")
+    
+# PROBLEM FOR FUTURE ME:
+# NEED TO HANDLE CASES WHERE INPUTS ARE HIDDEN, AND AREN'T DIRECTLY PASSED TO THE FUNCTION
+# WHAT ABOUT CASES WHERE ORDER DOESN'T MATTER, LIKE RETURNING A LINKED LIST (converted to list for checking)

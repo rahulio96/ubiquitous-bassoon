@@ -72,7 +72,7 @@ function EditorPage() {
         }
 
         const testCasesCode = await fetchTestCases(problemId);
-        console.log(codeValue + "\n" + testCasesCode);
+        const fullCodeToExecute = `${codeValue}\n\n${testCasesCode}`;
 
         try {
             setIsLoading(true);
@@ -82,7 +82,7 @@ function EditorPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ code: codeValue }),
+                body: JSON.stringify({ code: fullCodeToExecute }),
             });
 
             if (!response.ok) {
