@@ -29,9 +29,8 @@ async def execute_code(request: Request, user: User=Depends(verify_token)):
     if not code:
         raise HTTPException(status_code=400, detail="Cannot execute empty code.")
 
-    # TODO: Remove for now, ADD LATER WHEN WE EXCLUDE TEST CASES CODE!!!!!
-    # if len(code.encode("utf-8")) > MAX_CODE_SIZE:
-    #     raise HTTPException(status_code=400, detail="Code size exceeds the maximum limit.")
+    if len(code.encode("utf-8")) > MAX_CODE_SIZE:
+        raise HTTPException(status_code=400, detail="Code size exceeds the maximum limit.")
     
     # NOTE: Update this if other language support is added
     if language != "python":

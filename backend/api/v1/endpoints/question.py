@@ -1,7 +1,7 @@
 import ast
 import json
 from fastapi import APIRouter, HTTPException
-from backend.models.question import QuestionTestCase, TestQuestionSolutions, UserQuestion
+from backend.models.question import UserQuestion
 from backend.core.supabase import supabase
 import random
 
@@ -13,13 +13,14 @@ MAX_LINE_LENGTH = 90
 async def get_random_question(difficulty: str):    
     try:
         # Fetch all question IDs
-        result = supabase.table("questions").select("id").eq("difficulty", difficulty).contains("tags", ["linked list"]).execute()
+        result = supabase.table("questions").select("id").eq("difficulty", difficulty).execute()
         if result.data:
+            # Pick a random question ID
             random_id = random.choice([q["id"] for q in result.data])
             # Fetch the question by ID
             question_result = supabase.table("questions").select("*").eq("id", random_id).single().execute()
             question_data = question_result.data
-            
+
             description = question_data["problem_description"].split('\n')
             new_description = []
 
@@ -45,6 +46,14 @@ async def get_random_question(difficulty: str):
                         new_description.append(f"# {' '.join(temp_line)}")
                 else:
                     new_description.append(f"# {line}")
+
+            if "ListNode" in question_data["input_types"] or "ListNode" in question_data["output_type"]:
+                new_description.append("\n# Use list_to_linked_list(values: list[int]) -> ListNode to convert list to linked list")
+                new_description.append("# Use linked_list_to_list(head: ListNode) -> list[int] to convert linked list to list\n")
+
+            if "TreeNode" in question_data["input_types"] or "TreeNode" in question_data["output_type"]:
+                new_description.append("\n# Use list_to_tree(values: list[int]) -> TreeNode to convert list to binary tree")
+                new_description.append("# Use tree_to_list(root: TreeNode) -> list[int] to convert binary tree to list\n")
                     
             commented_description = '\n'.join(new_description)
 
@@ -156,6 +165,14 @@ async def get_test_case_code(question_id: str):
         print(e)
         raise HTTPException(status_code=500, detail=f"Error fetching test cases: {str(e)}")
     
-# PROBLEM FOR FUTURE ME:
-# NEED TO HANDLE CASES WHERE INPUTS ARE HIDDEN, AND AREN'T DIRECTLY PASSED TO THE FUNCTION
-# WHAT ABOUT CASES WHERE ORDER DOESN'T MATTER, LIKE RETURNING A LINKED LIST (converted to list for checking)
+# PROBLEMS FOR FUTURE ME:
+# Need to handle cases where inputs are hidden, and aren't directly passed to the function
+# There are also cases where order doesn't matter for either input or output
+# Some test cases check for exceptions and errors raised
+
+# Solution:
+# Store test case validation code for each problem
+# But this takes time, look into automating using local LLM?
+# Or manually add question validation code for neetcode 150 or blind 75 as a starting point
+
+# Will hold off on this for now, focus more on candidate communication, problem-solving skills, and general correctness

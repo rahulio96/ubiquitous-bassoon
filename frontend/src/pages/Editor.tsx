@@ -7,6 +7,8 @@ import type { ExecuteCodeResponse } from "../types/code";
 
 function EditorPage() {
 
+    const DIFFICULTY = 'easy';
+
     const [problemId, setProblemId] = useState<string>("");
     const [codeValue, setCodeValue] = useState<string>("# type here");
     const [codeResponse, setCodeResponse] = useState<ExecuteCodeResponse | null>(null);
@@ -40,7 +42,7 @@ function EditorPage() {
     };
 
     useEffect(() => {
-        fetchRandomQuestion('easy');
+        fetchRandomQuestion(DIFFICULTY);
     }, []);
 
     const fetchTestCases = async (questionId: string) => {
@@ -71,9 +73,6 @@ function EditorPage() {
             return;
         }
 
-        const testCasesCode = await fetchTestCases(problemId);
-        const fullCodeToExecute = `${codeValue}\n\n${testCasesCode}`;
-
         try {
             setIsLoading(true);
             setCodeResponse(null);
@@ -82,7 +81,7 @@ function EditorPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ code: fullCodeToExecute }),
+                body: JSON.stringify({ code: codeValue }),
             });
 
             if (!response.ok) {
@@ -126,16 +125,28 @@ function EditorPage() {
                     </div>
 
                     <div className="flex flex-col w-full pl-10 gap-10">
-                        <button 
-                            className='cursor-pointer bg-black px-5 py-3'
-                            onClick={handleRunCode}
-                            disabled={isLoading}>
-                                {isLoading ? "Running..." : "Run Code"}
-                        </button>
+
+                        <div className="flex w-full items-center font-bold gap-10">
+                            <button 
+                                className='cursor-pointer bg-(--secondary) px-5 py-3 w-full'
+                                onClick={handleRunCode}
+                                disabled={isLoading}>
+                                    {isLoading ? "Running..." : "Run Code"}
+                            </button>
+                            {/* 
+                            <button 
+                                className='cursor-pointer bg-green-600 px-5 py-3 w-full'
+                                onClick={handleRunCode}
+                                disabled={isLoading}>
+                                    {isLoading ? "Running..." : "Run Test Cases"}
+                            </button>
+                            */}
+                        </div>
+
 
                         <div className="justify-start bg-(--secondary) p-4 font-bold">
                             Output:
-                            <div className="flex-col h-[40vh] overflow-y-scroll whitespace-pre-wrap wrap-break-word font-normal">
+                            <div className="flex-col h-[40vh] overflow-y-scroll overflow-x-scroll whitespace-pre-wrap wrap-break-word font-normal">
                                 <span className={`block ${(codeResponse && codeResponse.is_error) && "text-red-500"}`}>
                                     {codeResponse ? `${codeResponse.output}` : ""}
                                 </span>
